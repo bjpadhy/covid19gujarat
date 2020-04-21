@@ -1,28 +1,45 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+<!--App Bar-->
+  <v-app id="app">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo&family=Maven+Pro:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <v-app-bar app color="#323232" dark>
+      <span class="title" style="font-family: 'Archivo', sans-serif !important">COVID19</span>
+      <span style="font-family: 'Maven Pro', sans-serif !important; padding-left:10px;">GUJARAT</span>
+      <v-spacer></v-spacer>
+
+      <v-btn outlined href="https://api.covid19india.org/" target="_blank" text>
+        <v-icon style="padding-right:10px;">mdi-github</v-icon>
+        <span class="mr-2">Data Source</span>
+      </v-btn>
+    </v-app-bar>
+
+    <v-content>
+      <MainContent />
+    </v-content>
+  </v-app>
+
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import MainContent from "./components/MainContent";
 
 export default {
   name: "App",
+
   components: {
-    HelloWorld
-  }
+    MainContent
+  },
+
+  data: () => ({
+    //
+  })
 };
 </script>
-
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  font-family: "Archivo", sans-serif;
 }
 </style>
