@@ -1,84 +1,129 @@
 <template>
   <v-container>
     <div id="app">
-      <!--India Stats-->
-      <div class="MapExplorer" style="margin-left: auto; margin-right: auto;">
-        <div class="header">
-          <h1>INDIA</h1>
-          <h6>Last Updated:{{stateTotal.country.date}}</h6>
-        </div>
-        <div class="map-stats">
-          <div class="stats">
-            <h5>Confirmed</h5>
-            <div class="stats-bottom">
-              <h1>{{stateTotal.country.confirmed}}</h1>
-              <h6>+{{stateTotal.country.delta.confirmed}}</h6>
-            </div>
-          </div>
-          <div class="stats is-blue">
-            <h5>Active</h5>
-            <div class="stats-bottom">
-              <h1>{{stateTotal.country.active}}</h1>
-              <h6 style="opacity:0;">+</h6>
-            </div>
-          </div>
-          <div class="stats is-green">
-            <h5>Recovered</h5>
-            <div class="stats-bottom">
-              <h1>{{stateTotal.country.recovered}}</h1>
-              <h6>+{{stateTotal.country.delta.recovered}}</h6>
-            </div>
-          </div>
-          <div class="stats is-gray">
-            <h5>Deceased</h5>
-            <div class="stats-bottom">
-              <h1>{{stateTotal.country.deceased}}</h1>
-              <h6>+{{stateTotal.country.delta.deceased}}</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="Home">
-        <!--Gujarat Stats-->
-        <div class="Home-left" style="margin-left:-130px;">
+      <!--Stats-->
+      <div class="Home" style="margin-top:-65px;">
+        <!--India Stats-->
+        <div class="home-left" id="content-left">
           <div class="MapExplorer">
             <div class="header">
-              <h1>Gujarat</h1>
-              <h6>Last Updated:{{stateTotal.date}}</h6>
+              <h1>INDIA</h1>
+              <h6>Last Updated:{{ statsData.india.date }}</h6>
             </div>
             <div class="map-stats">
               <div class="stats">
                 <h5>Confirmed</h5>
                 <div class="stats-bottom">
-                  <h1>{{stateTotal.confirmed}}</h1>
-                  <h6>+{{stateDaily.confirmed}}</h6>
+                  <h1>{{ numberWithCommas(statsData.india.confirmed) }}</h1>
+                  <h6>
+                    +{{ numberWithCommas(statsData.india.delta.confirmed) }}
+                  </h6>
                 </div>
               </div>
               <div class="stats is-blue">
                 <h5>Active</h5>
                 <div class="stats-bottom">
-                  <h1>{{stateTotal.active}}</h1>
+                  <h1>{{ numberWithCommas(statsData.india.active) }}</h1>
                   <h6 style="opacity:0;">+</h6>
                 </div>
               </div>
               <div class="stats is-green">
                 <h5>Recovered</h5>
                 <div class="stats-bottom">
-                  <h1>{{stateTotal.recovered}}</h1>
-                  <h6>+{{stateDaily.recovered}}</h6>
+                  <h1>{{ numberWithCommas(statsData.india.recovered) }}</h1>
+                  <h6>
+                    +{{ numberWithCommas(statsData.india.delta.recovered) }}
+                  </h6>
                 </div>
               </div>
               <div class="stats is-gray">
                 <h5>Deceased</h5>
                 <div class="stats-bottom">
-                  <h1>{{stateTotal.deceased}}</h1>
-                  <h6>+{{stateDaily.deceased}}</h6>
+                  <h1>{{ numberWithCommas(statsData.india.deceased) }}</h1>
+                  <h6>
+                    +{{ numberWithCommas(statsData.india.delta.deceased) }}
+                  </h6>
                 </div>
               </div>
             </div>
           </div>
+          <div class="TimeSeriesExplorer">
+            <div class="timeseries-header">
+              <h1>Trends</h1>
+            </div>
+            <line-chart
+              style="position: relative;"
+              v-if="loaded"
+              :data="chartData"
+              :options="options"
+            ></line-chart>
+          </div>
         </div>
-        <div class="Home-right" style="padding-left:150px;margin-right:-120px;">
+        <!--Gujarat Stats-->
+        <div class="home-right" id="content-right">
+          <div class="MapExplorer">
+            <div class="header">
+              <h1>Gujarat</h1>
+              <h6>Last Updated:{{ statsData.gujarat.date }}</h6>
+            </div>
+            <div class="map-stats">
+              <div class="stats">
+                <h5>Confirmed</h5>
+                <div class="stats-bottom">
+                  <h1>{{ numberWithCommas(statsData.gujarat.confirmed) }}</h1>
+                  <h6>
+                    +{{ numberWithCommas(statsData.gujarat.delta.confirmed) }}
+                  </h6>
+                </div>
+              </div>
+              <div class="stats is-blue">
+                <h5>Active</h5>
+                <div class="stats-bottom">
+                  <h1>{{ numberWithCommas(statsData.gujarat.active) }}</h1>
+                  <h6 style="opacity:0;">+</h6>
+                </div>
+              </div>
+              <div class="stats is-green">
+                <h5>Recovered</h5>
+                <div class="stats-bottom">
+                  <h1>{{ numberWithCommas(statsData.gujarat.recovered) }}</h1>
+                  <h6>
+                    +{{ numberWithCommas(statsData.gujarat.delta.recovered) }}
+                  </h6>
+                </div>
+              </div>
+              <div class="stats is-gray">
+                <h5>Deceased</h5>
+                <div class="stats-bottom">
+                  <h1>{{ numberWithCommas(statsData.gujarat.deceased) }}</h1>
+                  <h6>
+                    +{{ numberWithCommas(statsData.gujarat.delta.deceased) }}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="TimeSeriesExplorer" style="padding-top:25px;">
+            <v-card>
+              <v-card-title>
+                District Wise
+                <v-spacer></v-spacer>
+                <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+              <v-data-table
+                class="table"
+                :headers="districtHeader"
+                :items="districtData"
+                :search="search"
+              ></v-data-table>
+            </v-card>
+          </div>
         </div>
       </div>
     </div>
@@ -87,73 +132,243 @@
 
 <script>
 import axios from "axios";
+import LineChart from "./Chart";
 
+var dates = [];
+var confirmed = [];
+var recovered = [];
+var deceased = [];
 export default {
   name: "maincontent",
 
+  components: {
+    LineChart,
+  },
+
   mounted() {
+    this.loaded = false;
     axios
       .all([
+        axios.get("https://api.covid19india.org/data.json"),
         axios.get("https://api.covid19india.org/states_daily.json"),
-        axios.get("https://api.covid19india.org/data.json")
-        //axios.get("https://api.covid19india.org/v2/state_district_wise.json")
+        axios.get("https://api.covid19india.org/v2/state_district_wise.json"),
       ])
       .then(
-        axios.spread((states_daily, total_data) => {
+        axios.spread((total_data, states_daily, district_total) => {
+          //Stats
           //Latest Total Data
-          const totalDailyData = total_data.data.statewise;
-          //Latest State Data
-          const stateDailyDivided = states_daily.data.states_daily.splice(
-            states_daily.data.states_daily.length - 3,
-            states_daily.data.states_daily.length
+          const gujaratTotal = total_data.data.statewise.find(
+            ({ statecode }) => statecode === "GJ"
           );
-          //this.stateDaily.date =
-          this.stateDaily.date = stateDailyDivided[0].date;
-          this.stateDaily.confirmed = stateDailyDivided[0].gj;
-          this.stateDaily.recovered = stateDailyDivided[1].gj;
-          this.stateDaily.deceased = stateDailyDivided[2].gj;
-          this.stateTotal.country.date = totalDailyData[0].lastupdatedtime;
-          this.stateTotal.country.delta.confirmed =
-            totalDailyData[0].deltaconfirmed;
-          this.stateTotal.country.delta.recovered =
-            totalDailyData[0].deltarecovered;
-          this.stateTotal.country.delta.deceased =
-            totalDailyData[0].deltadeaths;
-          this.stateTotal.country.active = totalDailyData[0].active;
-          this.stateTotal.country.confirmed = totalDailyData[0].confirmed;
-          this.stateTotal.country.deceased = totalDailyData[0].deaths;
-          this.stateTotal.country.recovered = totalDailyData[0].recovered;
-          this.stateTotal.date = totalDailyData[6].lastupdatedtime;
-          this.stateTotal.active = totalDailyData[6].active;
-          this.stateTotal.confirmed = totalDailyData[6].confirmed;
-          this.stateTotal.deceased = totalDailyData[6].deaths;
-          this.stateTotal.recovered = totalDailyData[6].recovered;
+          const indiaTotal = total_data.data.statewise.find(
+            ({ statecode }) => statecode === "TT"
+          );
+
+          //India Data
+          this.statsData.india.date = indiaTotal.lastupdatedtime;
+          this.statsData.india.delta.confirmed = indiaTotal.deltaconfirmed;
+          this.statsData.india.delta.deceased = indiaTotal.deltadeaths;
+          this.statsData.india.delta.recovered = indiaTotal.deltarecovered;
+          this.statsData.india.active = indiaTotal.active;
+          this.statsData.india.confirmed = indiaTotal.confirmed;
+          this.statsData.india.deceased = indiaTotal.deaths;
+          this.statsData.india.recovered = indiaTotal.recovered;
+
+          //Gujarat Data
+          this.statsData.gujarat.date = gujaratTotal.lastupdatedtime;
+          this.statsData.gujarat.delta.confirmed = gujaratTotal.deltaconfirmed;
+          this.statsData.gujarat.delta.deceased = gujaratTotal.deltadeaths;
+          this.statsData.gujarat.delta.recovered = gujaratTotal.deltarecovered;
+          this.statsData.gujarat.active = gujaratTotal.active;
+          this.statsData.gujarat.confirmed = gujaratTotal.confirmed;
+          this.statsData.gujarat.deceased = gujaratTotal.deaths;
+          this.statsData.gujarat.recovered = gujaratTotal.recovered;
+
+          //Chart
+          //Fetching Dates
+          dates = states_daily.data.states_daily
+            .map((a) => a.date)
+            .filter((value, index, self) => self.indexOf(value) === index);
+
+          //Confirmed Data Split
+          var confirmedCount = 0;
+          for (let i = 0; i < states_daily.data.states_daily.length; i += 3) {
+            confirmedCount += +states_daily.data.states_daily[i].gj;
+            confirmed.push(confirmedCount);
+          }
+          //Recovered Data Split
+          var recoveredCount = 0;
+          for (let i = 1; i < states_daily.data.states_daily.length; i += 3) {
+            recoveredCount += +states_daily.data.states_daily[i].gj;
+            recovered.push(recoveredCount);
+          }
+          //Deceased Data Split
+          var deceasedCount = 0;
+          for (let i = 2; i < states_daily.data.states_daily.length; i += 3) {
+            deceasedCount += +states_daily.data.states_daily[i].gj;
+            deceased.push(deceasedCount);
+          }
+          for (let i = 0; i < dates.length; i++) {
+            let tempObj = {};
+            tempObj["date"] = dates[i];
+            tempObj["confirmed"] = confirmed[i];
+            tempObj["recovered"] = recovered[i];
+            tempObj["deceased"] = deceased[i];
+            this.chartData.push(tempObj);
+          }
+          this.loaded = true;
+
+          //Table
+          this.districtData = district_total.data.find(
+            ({ statecode }) => statecode === "GJ"
+          ).districtData;
+
           //Log statements
-          //console.log(totalDailyData[6].active);
-          console.log(totalDailyData[0]);
-          //console.log("Date created: ", state_district_wise);
+          //console.log(this.statsData.india.active);
+          console.log(this.districtData);
         })
       );
   },
 
+  methods: {
+    numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+  },
+
   data: () => ({
-    stateDaily: { date: null, confirmed: 0, recovered: 0, deceased: 0 },
-    stateTotal: {
-      country: {
+    loaded: false,
+    chartData: [],
+    options: {
+      responsive: true,
+      events: [
+        "click",
+        "mousemove",
+        "mouseout",
+        "touchstart",
+        "touchmove",
+        "touchend",
+      ],
+      maintainAspectRatio: false,
+      legend: {
+        display: true,
+        position: "bottom",
+      },
+      tooltips: {
+        intersect: false,
+        mode: "index",
+        position: "average",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        displayColors: false,
+        borderColor: "#c62828",
+        borderWidth: 1,
+        titleFontColor: "#000",
+        bodyFontColor: "#000",
+        caretPadding: 4,
+      },
+      elements: {
+        point: {
+          radius: 0,
+        },
+        line: {
+          tension: 0.1,
+          fill: true,
+        },
+      },
+      layout: {
+        padding: {
+          left: 20,
+          right: 20,
+          top: 0,
+          bottom: 20,
+        },
+      },
+      scales: {
+        yAxes: [
+          {
+            type: "linear",
+            ticks: {
+              beginAtZero: true,
+              max: undefined,
+              precision: 0,
+            },
+            scaleLabel: {
+              display: false,
+              labelString: "Total Cases",
+            },
+          },
+        ],
+        xAxes: [
+          {
+            type: "time",
+            time: {
+              unit: "day",
+              tooltipFormat: "MMM DD",
+              stepSize: 7,
+              displayFormats: {
+                millisecond: "MMM DD",
+                second: "MMM DD",
+                minute: "MMM DD",
+                hour: "MMM DD",
+                day: "MMM DD",
+                week: "MMM DD",
+                month: "MMM DD",
+                quarter: "MMM DD",
+                year: "MMM DD",
+              },
+            },
+            gridLines: {
+              display: false,
+            },
+          },
+        ],
+      },
+    },
+    statsData: {
+      india: {
         date: null,
         delta: { confirmed: 0, recovered: 0, deceased: 0 },
         confirmed: 0,
         active: 0,
         deceased: 0,
-        recovered: 0
+        recovered: 0,
       },
-      date: null,
-      confirmed: 0,
-      active: 0,
-      deceased: 0,
-      recovered: 0
-    }
-  })
+      gujarat: {
+        date: null,
+        delta: { confirmed: 0, recovered: 0, deceased: 0 },
+        confirmed: 0,
+        active: 0,
+        deceased: 0,
+        recovered: 0,
+      },
+    },
+    search: "",
+    districtData: [],
+    districtHeader: [
+      {
+        text: "District",
+        align: "start",
+        sortable: false,
+        value: "district",
+      },
+      {
+        text: "Confirmed",
+        value: "confirmed",
+      },
+      {
+        text: "Active",
+        value: "active",
+      },
+      {
+        text: "Recovered",
+        value: "recovered",
+      },
+      {
+        text: "Deceased",
+        value: "deceased",
+      },
+    ],
+  }),
 };
 </script>
 
@@ -545,29 +760,260 @@ h6 {
   }
 }
 
+.TimeSeriesExplorer {
+  align-self: center;
+  width: 30rem;
+
+  &.stickied {
+    position: sticky !important;
+    top: -6.5rem;
+  }
+}
+
+.TimeSeries,
+.Minigraph {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  width: 100%;
+
+  .stats {
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    left: 0.5rem;
+    padding: 0.25rem;
+    position: absolute;
+    top: 0.5rem;
+    width: 5rem;
+    z-index: -1;
+
+    h2,
+    h5,
+    h6 {
+      color: $cherry-mid;
+      margin: 0;
+      transition: all 0.15s ease-in-out;
+    }
+
+    h5 {
+      &.title {
+        color: $cherry;
+      }
+    }
+
+    h2,
+    h6 {
+      color: $cherry;
+    }
+
+    .stats-bottom {
+      display: flex;
+      flex-direction: row;
+
+      h6 {
+        margin-bottom: 0.1rem;
+        margin-left: 0.25rem;
+      }
+
+      & > * {
+        margin-top: auto;
+      }
+    }
+
+    &.is-green {
+      h5 {
+        color: $green-mid;
+
+        &.title {
+          color: $green;
+        }
+      }
+
+      h2,
+      h6 {
+        color: $green;
+      }
+    }
+
+    &.is-gray {
+      h5 {
+        color: $gray-mid;
+
+        &.title {
+          color: $gray;
+        }
+      }
+
+      h2,
+      h6 {
+        color: $gray;
+      }
+    }
+
+    &.is-blue {
+      h5 {
+        color: $blue-mid;
+
+        &.title {
+          color: $blue;
+        }
+      }
+
+      h2,
+      h6 {
+        color: $blue;
+      }
+    }
+  }
+
+  .svg-parent {
+    align-self: center;
+    background: $cherry-light;
+    border-radius: 5px;
+    display: flex;
+    height: 10rem;
+    margin-bottom: 1rem;
+    position: relative;
+    width: 30rem;
+
+    svg {
+      width: 100%;
+
+      .domain,
+      .tick,
+      line {
+        stroke: $cherry;
+        stroke-width: 1.5;
+      }
+
+      text {
+        color: $cherry-mid;
+        font-family: "archia";
+        font-size: 9px;
+        font-weight: 600;
+        stroke: transparent;
+      }
+    }
+
+    &.is-green {
+      background: $green-light;
+
+      svg {
+        .domain,
+        .tick,
+        line {
+          stroke: $green;
+        }
+
+        text {
+          color: $green-mid;
+          stroke: transparent;
+        }
+      }
+    }
+
+    &.is-gray {
+      background: $gray-light;
+
+      .domain,
+      .tick,
+      line {
+        stroke: $gray;
+      }
+
+      text {
+        color: $gray-mid;
+        stroke: transparent;
+      }
+    }
+
+    &.is-blue {
+      background: $blue-light;
+
+      .domain,
+      .tick,
+      line {
+        stroke: $blue;
+      }
+
+      text {
+        color: $blue-mid;
+        stroke: transparent;
+      }
+    }
+  }
+}
+
+.TimeSeries {
+  align-self: center;
+  width: 100%;
+}
+
+.timeseries-header {
+  align-self: center;
+  margin-top: 3rem;
+  width: 100%;
+
+  h1 {
+    color: $gray;
+    margin: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .scale-modes {
+    align-items: flex-end;
+    bottom: 0;
+    color: $gray;
+    display: flex;
+    flex-direction: row;
+    margin-top: 1rem;
+    right: 0;
+    z-index: 99;
+
+    label {
+      color: $gray-mid;
+      font-family: "archia";
+      font-size: 0.75rem;
+      font-weight: 900;
+      margin-right: 0.25rem;
+      transition: all 0.2s ease-in-out;
+      z-index: 99;
+    }
+
+    &:hover {
+      label {
+        &.main {
+          color: $gray;
+        }
+      }
+    }
+
+    & > * {
+      align-self: center;
+    }
+  }
+}
+
 .Home {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-left: 5rem;
-  margin-right: 5rem;
+  width: 100%;
 
   .home-left,
   .home-right {
     display: flex;
     flex-direction: column;
-    width: 30rem;
+    width: 100%;
   }
 
   .home-left {
-    margin-right: 2.5rem;
-    margin-left: 2.5rem;
+    padding-right: 15px;
   }
 
   .home-right {
-    margin-left: 2.5rem;
-    margin-right: 2.5rem;
+    padding-left: 25px;
   }
 }
 
