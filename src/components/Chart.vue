@@ -20,7 +20,7 @@ export default {
     this.gradient1.addColorStop(0.5, "rgba(40, 167, 69, 0.25)");
     this.gradient1.addColorStop(1, "rgba(40, 167, 69, 0)");
     //Deceased
-        this.gradient2 = this.$refs.canvas
+    this.gradient2 = this.$refs.canvas
       .getContext("2d")
       .createLinearGradient(0, 0, 0, 450);
     this.gradient2.addColorStop(0, "rgba(108, 117, 125, 0.5)");
@@ -37,7 +37,7 @@ export default {
           pointHoverRadius: 2,
           borderCapStyle: "round",
           pointBackgroundColor: "#ff073a",
-          data: [],
+          data: []
         },
         {
           label: "Recovered",
@@ -47,7 +47,7 @@ export default {
           pointHoverRadius: 2,
           borderCapStyle: "round",
           pointBackgroundColor: "#28a745",
-          data: [],
+          data: []
         },
         {
           label: "Deceased",
@@ -57,9 +57,9 @@ export default {
           pointHoverRadius: 2,
           borderCapStyle: "round",
           pointBackgroundColor: "#6c757d",
-          data: [],
-        },
-      ],
+          data: []
+        }
+      ]
     };
     for (let i = 0; i < this.data.length; i++) {
       chartData.labels.push(this.data[i].date);
@@ -68,6 +68,6 @@ export default {
       chartData.datasets[2].data.push(this.data[i].deceased);
     }
     this.renderChart(chartData, this.options);
-  },
+  }
 };
 </script>

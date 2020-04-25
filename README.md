@@ -1,4 +1,6 @@
 # covid19gujarat
+The website aims at providing reliable information related to covid19 for the state of gujarat.
+Information includes latest stats, trend chart, news feed from official sources and a list of essential services.
 
 ## Project setup
 ```

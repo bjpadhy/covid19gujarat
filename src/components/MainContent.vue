@@ -1,13 +1,14 @@
 <template>
   <v-container>
     <div id="app">
-      <!--Stats-->
       <div class="Home" style="margin-top:-65px;">
-        <!--India Stats-->
         <div class="home-left" id="content-left">
+          <!--India Stats-->
           <div class="MapExplorer">
             <div class="header">
-              <h1>INDIA</h1>
+              <h1 style="font-family: Maven Pro, sans-serif !important;">
+                India
+              </h1>
               <h6>Last Updated:{{ statsData.india.date }}</h6>
             </div>
             <div class="map-stats">
@@ -47,6 +48,7 @@
               </div>
             </div>
           </div>
+          <!--Trends-->
           <div class="TimeSeriesExplorer">
             <div class="timeseries-header">
               <h1>Trends</h1>
@@ -59,8 +61,9 @@
             ></line-chart>
           </div>
         </div>
-        <!--Gujarat Stats-->
+
         <div class="home-right" id="content-right">
+          <!--Gujarat Stats-->
           <div class="MapExplorer">
             <div class="header">
               <h1>Gujarat</h1>
@@ -103,28 +106,130 @@
               </div>
             </div>
           </div>
-          <div class="TimeSeriesExplorer" style="padding-top:25px;">
-            <v-card>
-              <v-card-title>
-                District Wise
-                <v-spacer></v-spacer>
-                <v-text-field
-                  v-model="search"
-                  append-icon="mdi-magnify"
-                  label="Search"
-                  single-line
-                  hide-details
-                ></v-text-field>
-              </v-card-title>
-              <v-data-table
-                class="table"
-                :headers="districtHeader"
-                :items="districtData"
-                :search="search"
-              ></v-data-table>
+          <!--State Ratio-->
+          <div class="TimeSeriesExplorer">
+            <div class="timeseries-header">
+              <h1>State Ratio</h1>
+            </div>
+            <v-card
+              class="mx-auto"
+              max-width="500"
+              style="font-family: Maven Pro, sans-serif !important;"
+            >
+              <v-list flat>
+                <v-subheader
+                  >Total active cases:
+                  {{ statsData.gujarat.active }}</v-subheader
+                >
+                <v-list-item-group>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon>{{ districtTop5[0].district }}:</v-icon>
+                        <v-icon>{{ percent(0) }}%</v-icon>
+                      </v-list-item-icon>
+                      <v-progress-linear
+                        height="5px"
+                        color="red darken-2"
+                        rounded
+                        :value="
+                          (districtTop5[0].active / statsData.gujarat.active) *
+                            100
+                        "
+                      ></v-progress-linear>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-icon style="padding-bottom:5px;">
+                        <v-icon>{{ districtTop5[1].district }}:</v-icon>
+                        <v-icon>{{ percent(1) }}%</v-icon>
+                      </v-list-item-icon>
+                      <v-progress-linear
+                        color="red darken-2"
+                        rounded
+                        :value="
+                          (districtTop5[1].active / statsData.gujarat.active) *
+                            100
+                        "
+                      ></v-progress-linear>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-icon style="padding-bottom:5px;">
+                        <v-icon>{{ districtTop5[2].district }}:</v-icon>
+                        <v-icon>{{ percent(2) }}%</v-icon>
+                      </v-list-item-icon>
+                      <v-progress-linear
+                        color="red darken-2"
+                        rounded
+                        :value="
+                          (districtTop5[2].active / statsData.gujarat.active) *
+                            100
+                        "
+                      ></v-progress-linear>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-icon style="padding-bottom:5px;">
+                        <v-icon>{{ districtTop5[3].district }}:</v-icon>
+                        <v-icon>{{ percent(3) }}%</v-icon>
+                      </v-list-item-icon>
+                      <v-progress-linear
+                        color="red darken-2"
+                        rounded
+                        :value="
+                          (districtTop5[3].active / statsData.gujarat.active) *
+                            100
+                        "
+                      ></v-progress-linear>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-icon style="padding-bottom:5px;">
+                        <v-icon>{{ districtTop5[4].district }}:</v-icon>
+                        <v-icon>{{ percent(4) }}%</v-icon>
+                      </v-list-item-icon>
+                      <v-progress-linear
+                        color="red darken-2"
+                        rounded
+                        :value="
+                          (districtTop5[4].active / statsData.gujarat.active) *
+                            100
+                        "
+                      ></v-progress-linear>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
             </v-card>
           </div>
         </div>
+      </div>
+      <!--District Table-->
+      <div class="Home">
+        <v-card style="width:100%;">
+          <v-card-title style="font-family: Maven Pro, sans-serif !important;">
+            District Wise
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+          <v-data-table
+            class="table"
+            :headers="districtHeader"
+            :items="districtData"
+            :search="search"
+          ></v-data-table>
+        </v-card>
       </div>
     </div>
   </v-container>
@@ -142,7 +247,7 @@ export default {
   name: "maincontent",
 
   components: {
-    LineChart,
+    LineChart
   },
 
   mounted() {
@@ -151,7 +256,7 @@ export default {
       .all([
         axios.get("https://api.covid19india.org/data.json"),
         axios.get("https://api.covid19india.org/states_daily.json"),
-        axios.get("https://api.covid19india.org/v2/state_district_wise.json"),
+        axios.get("https://api.covid19india.org/v2/state_district_wise.json")
       ])
       .then(
         axios.spread((total_data, states_daily, district_total) => {
@@ -187,7 +292,7 @@ export default {
           //Chart
           //Fetching Dates
           dates = states_daily.data.states_daily
-            .map((a) => a.date)
+            .map(a => a.date)
             .filter((value, index, self) => self.indexOf(value) === index);
 
           //Confirmed Data Split
@@ -218,10 +323,20 @@ export default {
           }
           this.loaded = true;
 
-          //Table
+          //District Table
           this.districtData = district_total.data.find(
             ({ statecode }) => statecode === "GJ"
           ).districtData;
+
+          var tempArr = [...this.districtData];
+
+          this.districtTop5 = this.districtTop5.concat(
+            tempArr
+              .sort((active1, active2) => {
+                return active2.active - active1.active;
+              })
+              .splice(0, 5)
+          );
 
           //Log statements
           //console.log(this.statsData.india.active);
@@ -231,9 +346,14 @@ export default {
   },
 
   methods: {
+    percent(i) {
+      return Math.round(
+        (this.districtTop5[i].active / this.statsData.gujarat.active) * 100
+      );
+    },
     numberWithCommas(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    },
+    }
   },
 
   data: () => ({
@@ -247,12 +367,12 @@ export default {
         "mouseout",
         "touchstart",
         "touchmove",
-        "touchend",
+        "touchend"
       ],
       maintainAspectRatio: false,
       legend: {
         display: true,
-        position: "bottom",
+        position: "bottom"
       },
       tooltips: {
         intersect: false,
@@ -264,24 +384,24 @@ export default {
         borderWidth: 1,
         titleFontColor: "#000",
         bodyFontColor: "#000",
-        caretPadding: 4,
+        caretPadding: 4
       },
       elements: {
         point: {
-          radius: 0,
+          radius: 0
         },
         line: {
           tension: 0.1,
-          fill: true,
-        },
+          fill: true
+        }
       },
       layout: {
         padding: {
           left: 20,
           right: 20,
           top: 0,
-          bottom: 20,
-        },
+          bottom: 20
+        }
       },
       scales: {
         yAxes: [
@@ -290,13 +410,13 @@ export default {
             ticks: {
               beginAtZero: true,
               max: undefined,
-              precision: 0,
+              precision: 0
             },
             scaleLabel: {
               display: false,
-              labelString: "Total Cases",
-            },
-          },
+              labelString: "Total Cases"
+            }
+          }
         ],
         xAxes: [
           {
@@ -314,15 +434,15 @@ export default {
                 week: "MMM DD",
                 month: "MMM DD",
                 quarter: "MMM DD",
-                year: "MMM DD",
-              },
+                year: "MMM DD"
+              }
             },
             gridLines: {
-              display: false,
-            },
-          },
-        ],
-      },
+              display: false
+            }
+          }
+        ]
+      }
     },
     statsData: {
       india: {
@@ -331,7 +451,7 @@ export default {
         confirmed: 0,
         active: 0,
         deceased: 0,
-        recovered: 0,
+        recovered: 0
       },
       gujarat: {
         date: null,
@@ -339,36 +459,37 @@ export default {
         confirmed: 0,
         active: 0,
         deceased: 0,
-        recovered: 0,
-      },
+        recovered: 0
+      }
     },
     search: "",
     districtData: [],
+    districtTop5: [],
     districtHeader: [
       {
         text: "District",
         align: "start",
         sortable: false,
-        value: "district",
+        value: "district"
       },
       {
         text: "Confirmed",
-        value: "confirmed",
+        value: "confirmed"
       },
       {
         text: "Active",
-        value: "active",
+        value: "active"
       },
       {
         text: "Recovered",
-        value: "recovered",
+        value: "recovered"
       },
       {
         text: "Deceased",
-        value: "deceased",
-      },
-    ],
-  }),
+        value: "deceased"
+      }
+    ]
+  })
 };
 </script>
 
@@ -441,6 +562,7 @@ $pink-mid: #ffa8cb99;
 $brick: #e23028;
 
 body {
+  font-family: "Maven Pro", sans-serif !important;
   padding: 0;
   margin: 0;
   -webkit-tap-highlight-color: transparent;
