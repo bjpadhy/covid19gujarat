@@ -338,10 +338,6 @@
             </v-col>
           </v-row>
         </div>
-        <!--News Feed-->
-        <div id="newsFeed">
-          <NewsFeed />
-        </div>
       </div>
     </v-container>
   </v-content>
@@ -350,19 +346,17 @@
 <script>
 import axios from "axios";
 import LineChart from "./Chart";
-import NewsFeed from "./NewsFeed";
 import store from "../store/index";
-console.log(process.env.VUE_APP_APIKEY);
+
 var dates = [];
 var confirmed = [];
 var recovered = [];
 var deceased = [];
 export default {
-  name: "maincontent",
+  name: "MainContent",
 
   components: {
-    LineChart,
-    NewsFeed
+    LineChart
   },
 
   mounted() {
@@ -451,14 +445,22 @@ export default {
             ).districtData;
 
             var tempArr = [...this.districtData];
+            var newArr = [];
 
-            this.districtTop5 = this.districtTop5.concat(
+            newArr = newArr.concat(
               tempArr
                 .sort((active1, active2) => {
                   return active2.active - active1.active;
                 })
                 .splice(0, 5)
             );
+
+            //Set root-level reactive property
+            var i = 0;
+            while (i < 5) {
+              this.$set(this.districtTop5, i, newArr[i]);
+              i++;
+            }
 
             var storeObj = {
               confirmed: confirmed,
@@ -485,6 +487,74 @@ export default {
     loaded: false,
     chartData: [],
     sparkLine: store.getters.getSparkLine,
+    //Necessary since Vue doesn’t allow dynamically adding root-level reactive properties
+    districtTop5: [
+      {
+        active: 0,
+        confirmed: 0,
+        deceased: 0,
+        delta: {
+          confirmed: 0,
+          deceased: 0,
+          recovered: 0
+        },
+        district: "",
+        notes: "",
+        recovered: 0
+      },
+      {
+        active: 0,
+        confirmed: 0,
+        deceased: 0,
+        delta: {
+          confirmed: 0,
+          deceased: 0,
+          recovered: 0
+        },
+        district: "",
+        notes: "",
+        recovered: 0
+      },
+      {
+        active: 0,
+        confirmed: 0,
+        deceased: 0,
+        delta: {
+          confirmed: 0,
+          deceased: 0,
+          recovered: 0
+        },
+        district: "",
+        notes: "",
+        recovered: 0
+      },
+      {
+        active: 0,
+        confirmed: 0,
+        deceased: 0,
+        delta: {
+          confirmed: 0,
+          deceased: 0,
+          recovered: 0
+        },
+        district: "",
+        notes: "",
+        recovered: 0
+      },
+      {
+        active: 0,
+        confirmed: 0,
+        deceased: 0,
+        delta: {
+          confirmed: 0,
+          deceased: 0,
+          recovered: 0
+        },
+        district: "",
+        notes: "",
+        recovered: 0
+      }
+    ],
     options: {
       responsive: true,
       events: [
@@ -585,7 +655,6 @@ export default {
     },
     search: "",
     districtData: [],
-    districtTop5: [],
     districtHeader: [
       {
         text: "District",

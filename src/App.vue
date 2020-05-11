@@ -15,6 +15,12 @@
       >
       <v-spacer></v-spacer>
 
+      <router-link to="/newsfeed">
+        <v-btn outlined text style="margin-right:15px;">
+          <v-icon>mdi-information-outline</v-icon>
+        </v-btn>
+      </router-link>
+
       <v-btn outlined href="https://api.covid19india.org/" target="_blank" text>
         <v-icon style="padding-right:10px;">mdi-github</v-icon>
         <span class="mr-2">Data Source</span>
@@ -22,20 +28,16 @@
     </v-app-bar>
 
     <v-content>
-      <MainContent />
+      <template v-if="$route.matched.length">
+        <router-view></router-view>
+      </template>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import MainContent from "./components/MainContent";
-
 export default {
   name: "App",
-
-  components: {
-    MainContent
-  },
 
   data: () => ({
     //
@@ -45,5 +47,8 @@ export default {
 <style>
 #app {
   font-family: "Archivo", sans-serif;
+}
+a {
+  text-decoration: none;
 }
 </style>
