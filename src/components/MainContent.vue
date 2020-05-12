@@ -25,7 +25,7 @@
               <v-card
                 class="mx-auto text-center"
                 flat
-                hover
+                elevation="4"
                 width="150"
                 color="rgba(255, 7, 58, 0.1)"
                 light
@@ -55,12 +55,41 @@
                 </v-card-text>
               </v-card>
             </v-col>
+            <!--Active-->
+            <v-col md="auto">
+              <v-card
+                class="mx-auto text-center"
+                flat
+                elevation="4"
+                width="150"
+                color="rgba(0, 123, 255, 0.1)"
+                light
+              >
+                <v-sparkline
+                  :value="sparkLine.active"
+                  color="rgba(0, 123, 255, 0.9)"
+                  height="140"
+                  padding="20"
+                  stroke-linecap="round"
+                  smooth
+                >
+                </v-sparkline>
+                <v-card-text>
+                  <div class="title font-weight-thin">Active</div>
+                  <v-row align-content="center" justify="center">
+                    <div class="title" style="color:rgba(0, 123, 255, 0.9);">
+                      {{ statsData.gujarat.active }}
+                    </div>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-col>
             <!--Recovered-->
             <v-col md="auto">
               <v-card
                 class="mx-auto text-center"
                 flat
-                hover
+                elevation="4"
                 width="150"
                 color="rgba(40, 167, 69, 0.1)"
                 light
@@ -95,7 +124,7 @@
               <v-card
                 class="mx-auto text-center"
                 flat
-                hover
+                elevation="4"
                 width="150"
                 color="rgba(108, 117, 125, 0.1)"
                 light
@@ -135,13 +164,33 @@
             </h1>
           </v-row>
           <v-row style="padding-bottom:45px;">
-            <v-card flat hover class="mx-auto" width="100%">
-              <line-chart
-                style="padding-top: 15px;"
-                v-if="loaded"
-                :data="chartData"
-                :options="options"
-              ></line-chart>
+            <v-card flat elevation="4" class="mx-auto">
+              <v-row>
+                <v-col cols="12" sm="4">
+                  <line-chart
+                    style="padding-top: 15px;"
+                    v-if="loaded"
+                    :data="activeChartData"
+                    :options="options"
+                  ></line-chart>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <line-chart
+                    style="padding-top: 15px;"
+                    v-if="loaded"
+                    :data="recoveredChartData"
+                    :options="options"
+                  ></line-chart>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <line-chart
+                    style="padding-top: 15px;"
+                    v-if="loaded"
+                    :data="deceasedChartData"
+                    :options="options"
+                  ></line-chart>
+                </v-col>
+              </v-row>
             </v-card>
           </v-row>
         </div>
@@ -162,7 +211,7 @@
             <v-col md="auto">
               <v-card
                 flat
-                hover
+                elevation="4"
                 width="500"
                 class="mx-auto"
                 style="font-family: Maven Pro, sans-serif !important;"
@@ -314,7 +363,7 @@
             </v-col>
             <!--District Wise Table-->
             <v-col md="auto">
-              <v-card flat hover width="100%">
+              <v-card flat elevation="4" width="100%">
                 <v-card-title
                   style="font-family: Maven Pro, sans-serif !important;"
                 >
@@ -352,6 +401,7 @@ var dates = [];
 var confirmed = [];
 var recovered = [];
 var deceased = [];
+var active = [];
 export default {
   name: "MainContent",
 
@@ -405,7 +455,7 @@ export default {
             this.statsData.gujarat.deceased = gujaratTotal.deaths;
             this.statsData.gujarat.recovered = gujaratTotal.recovered;
 
-            //Chart
+            //Chart Data and Options
             //Fetching Dates
             dates = states_daily.data.states_daily
               .map(a => a.date)
@@ -429,14 +479,52 @@ export default {
               deceasedCount += +states_daily.data.states_daily[i].gj;
               deceased.push(deceasedCount);
             }
+            //Active Data Split
+            var item = [];
+            for (let index = 0; index < deceased.length; index++) {
+              item.push(deceased[index] + recovered[index]);
+            }
+            active = confirmed.map(function(num, idx) {
+              return num - item[idx];
+            });
+
+            //Active Chart
             for (let i = 0; i < dates.length; i++) {
               let tempObj = {};
               tempObj["date"] = dates[i];
-              tempObj["confirmed"] = confirmed[i];
-              tempObj["recovered"] = recovered[i];
-              tempObj["deceased"] = deceased[i];
-              this.chartData.push(tempObj);
+              tempObj["value"] = active[i];
+              this.activeChartData.push(tempObj);
             }
+            let tempObjAct = {};
+            tempObjAct["label"] = "Active";
+            tempObjAct["borderColor"] = "rgb(0, 123, 255)";
+
+            this.activeChartData.push(tempObjAct);
+
+            //Recovered Chart
+            for (let i = 0; i < dates.length; i++) {
+              let tempObj = {};
+              tempObj["date"] = dates[i];
+              tempObj["value"] = recovered[i];
+              this.recoveredChartData.push(tempObj);
+            }
+            let tempObjRec = {};
+            tempObjRec["label"] = "Recovered";
+            tempObjRec["borderColor"] = "rgb(40, 167, 69)";
+            this.recoveredChartData.push(tempObjRec);
+
+            //Deceased Chart
+            for (let i = 0; i < dates.length; i++) {
+              let tempObj = {};
+              tempObj["date"] = dates[i];
+              tempObj["value"] = deceased[i];
+              this.deceasedChartData.push(tempObj);
+            }
+            let tempObjDec = {};
+            tempObjDec["label"] = "Deceased";
+            tempObjDec["borderColor"] = "rgb(108, 117, 125)";
+            this.deceasedChartData.push(tempObjDec);
+
             this.loaded = true;
 
             //District Table
@@ -466,10 +554,12 @@ export default {
               confirmed: confirmed,
               recovered: recovered,
               deceased: deceased,
+              active: active,
               dates: dates
             };
             store.commit("setSparkLine", storeObj);
             //Log statements
+            console.log(this.activeChartData);
           })
         );
     },
@@ -485,7 +575,9 @@ export default {
 
   data: () => ({
     loaded: false,
-    chartData: [],
+    activeChartData: [],
+    recoveredChartData: [],
+    deceasedChartData: [],
     sparkLine: store.getters.getSparkLine,
     //Necessary since Vue doesn’t allow dynamically adding root-level reactive properties
     districtTop5: [
@@ -575,7 +667,7 @@ export default {
         mode: "index",
         position: "average",
         backgroundColor: "rgba(255, 255, 255, 0.6)",
-        displayColors: false,
+        displayColors: true,
         borderColor: "#c62828",
         borderWidth: 1,
         titleFontColor: "#000",
@@ -587,7 +679,7 @@ export default {
           radius: 0
         },
         line: {
-          tension: 0.1,
+          tension: 0,
           fill: true
         }
       },
@@ -598,14 +690,14 @@ export default {
             ticks: {
               beginAtZero: true,
               max: undefined,
-              precision: 0
+              precision: 10
             },
             scaleLabel: {
               display: false,
               labelString: "Total Cases"
             },
             gridLines: {
-              display: false
+              display: true
             }
           }
         ],
@@ -615,7 +707,7 @@ export default {
             time: {
               unit: "day",
               tooltipFormat: "MMM DD",
-              stepSize: 7,
+              stepSize: 14,
               displayFormats: {
                 millisecond: "MMM DD",
                 second: "MMM DD",

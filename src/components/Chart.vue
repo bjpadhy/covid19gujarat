@@ -1,17 +1,18 @@
 <script>
 import { Line } from "vue-chartjs";
-
+//rgba(0, 123, 255, 0.1)
 export default {
   extends: Line,
   name: "LineChart",
   props: ["data", "options"],
   mounted() {
+    //Active
     this.gradient = this.$refs.canvas
       .getContext("2d")
       .createLinearGradient(0, 0, 0, 450);
-    this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
-    this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
-    this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+    this.gradient.addColorStop(0, "rgba(0, 123, 255, 0.5)");
+    this.gradient.addColorStop(0.5, "rgba(0, 123, 255, 0.25)");
+    this.gradient.addColorStop(1, "rgba(0, 123, 255, 0)");
     //Recovered
     this.gradient1 = this.$refs.canvas
       .getContext("2d")
@@ -30,43 +31,38 @@ export default {
       labels: [],
       datasets: [
         {
-          label: "Confirmed",
-          borderColor: "#ff073a",
-          backgroundColor: this.gradient,
+          label: "Active",
+          borderColor: "",
+          backgroundColor: null,
           borderWidth: 2,
           pointHoverRadius: 2,
           borderCapStyle: "round",
-          pointBackgroundColor: "#ff073a",
-          data: []
-        },
-        {
-          label: "Recovered",
-          borderColor: "#28a745",
-          backgroundColor: this.gradient1,
-          borderWidth: 2,
-          pointHoverRadius: 2,
-          borderCapStyle: "round",
-          pointBackgroundColor: "#28a745",
-          data: []
-        },
-        {
-          label: "Deceased",
-          borderColor: "#6c757d",
-          backgroundColor: this.gradient2,
-          borderWidth: 2,
-          pointHoverRadius: 2,
-          borderCapStyle: "round",
-          pointBackgroundColor: "#6c757d",
+          pointBackgroundColor: "",
           data: []
         }
       ]
     };
-    for (let i = 0; i < this.data.length; i++) {
+
+    for (let i = 0; i < this.data.length - 1; i++) {
       chartData.labels.push(this.data[i].date);
-      chartData.datasets[0].data.push(this.data[i].confirmed);
-      chartData.datasets[1].data.push(this.data[i].recovered);
-      chartData.datasets[2].data.push(this.data[i].deceased);
+      chartData.datasets[0].data.push(this.data[i].value);
     }
+    chartData.datasets[0].label = this.data[this.data.length - 1].label;
+    chartData.datasets[0].borderColor = this.data[
+      this.data.length - 1
+    ].borderColor;
+    chartData.datasets[0].pointBackgroundColor = this.data[
+      this.data.length - 1
+    ].borderColor;
+
+    if (chartData.datasets[0].label === "Active") {
+      chartData.datasets[0].backgroundColor = this.gradient;
+    } else if (chartData.datasets[0].label === "Recovered") {
+      chartData.datasets[0].backgroundColor = this.gradient1;
+    } else if (chartData.datasets[0].label === "Deceased") {
+      chartData.datasets[0].backgroundColor = this.gradient2;
+    }
+    //Render Chart
     this.renderChart(chartData, this.options);
   }
 };
