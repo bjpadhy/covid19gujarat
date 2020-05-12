@@ -49,11 +49,13 @@
 
 <script>
 import moment from "moment";
+//import scraper from "scrape-twitter";
 export default {
   name: "NewsFeed",
 
   mounted() {
     this.initNews();
+    //this.getTweets();
   },
 
   data: () => ({
@@ -61,6 +63,14 @@ export default {
   }),
 
   methods: {
+    // async getTweets() {
+    //   let result = await new scraper.ListStream("bjpadhy", "corona-gujarat", 3);
+    //   const chunks = [];
+    //   for await (const chunk of result) {
+    //     chunks.push(chunk);
+    //   }
+    //   console.log(chunks[0]);
+    // },
     async initNews() {
       let response = await fetch(
         "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/NewsSearchAPI?fromPublishedDate=1%252F1%252F2020&autoCorrect=false&pageNumber=1&pageSize=10&q=corona%20gujarat&safeSearch=true",

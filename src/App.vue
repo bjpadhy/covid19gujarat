@@ -16,6 +16,7 @@
     >
       <v-list nav class="py-0">
         <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+        <router-link to="/">
         <v-list-item link>
           <v-list-item-icon>
             <svg
@@ -74,7 +75,9 @@
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        </router-link>
 
+      <router-link to="/newsfeed">
         <v-list-item link>
           <v-list-item-icon>
             <svg
@@ -113,6 +116,7 @@
             <v-list-item-title>News Feed</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+      </router-link>
 
         <v-list-item link>
           <v-list-item-icon>
