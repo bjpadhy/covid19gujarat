@@ -132,29 +132,29 @@ export default {
   },
 
   data: () => ({
-    list: [],
+    list: []
   }),
 
   methods: {
     async getData() {
       axios
         .get("https://api.covid19india.org/resources/resources.json")
-        .then((response) => {
+        .then(response => {
           let tempArray = [];
           tempArray = response.data.resources.filter(
-            (resource) => resource.state === "Gujarat"
+            resource => resource.state === "Gujarat"
           );
-          tempArray.forEach((element) => {
+          tempArray.forEach(element => {
             element["show"] = false;
           });
-          tempArray.forEach((element) => {
+          tempArray.forEach(element => {
             this.list.push(element);
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         });
-    },
-  },
+    }
+  }
 };
 </script>

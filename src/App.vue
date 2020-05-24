@@ -221,9 +221,9 @@ export default {
       { title: "Dashboard", icon: "mdi-dashboard" },
       { title: "News Feed", icon: "mdi-image" },
       { title: "Essentials", icon: "mdi-help-box" },
-      { title: "Data Source", icon: "mdi-dark-githubx" },
-    ],
-  }),
+      { title: "Data Source", icon: "mdi-dark-githubx" }
+    ]
+  })
 };
 </script>
 <style>

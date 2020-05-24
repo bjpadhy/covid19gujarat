@@ -4,7 +4,7 @@
       <!--Tweets-->
       <div id="tweets">
         <v-row style="padding-bottom:15px;">
-          <v-list-item link>
+          <v-list-item>
             <v-list-item-icon>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -45,57 +45,58 @@
             </v-list-item-content>
           </v-list-item>
         </v-row>
-        <v-item-group>
-          <v-container>
-            <v-row>
-              <v-col v-for="(tweet, t) in tweets" :key="t" cols="12" md="4">
-                <v-item>
-                  <v-card
-                    class="mx-auto"
-                    color="#26c6da"
-                    max-height="600"
-                    dark
-                    max-width="400"
-                  >
-                    <v-img
-                      v-if="tweet.images.length !== 0"
-                      :src="tweet.images[0]"
-                      height="200px"
-                    ></v-img>
-                    <v-card-text class="subtitle-1">
-                      {{ tweet.text }}
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-list-item class="grow">
-                        <v-list-item-content>
-                          <v-list-item-title>{{
-                            tweet.screenName
-                          }}</v-list-item-title>
-                        </v-list-item-content>
-                        <v-row align="center" justify="end">
-                          <v-icon class="mr-1">mdi-heart</v-icon>
-                          <span class="subheading mr-2">{{
-                            tweet.favoriteCount
-                          }}</span>
-                          <span class="mr-1">·</span>
-                          <v-icon class="mr-1">mdi-share-variant</v-icon>
-                          <span class="subheading">{{
-                            tweet.retweetCount
-                          }}</span>
-                        </v-row>
-                      </v-list-item>
-                    </v-card-actions>
-                  </v-card>
-                </v-item>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-item-group>
+        <v-row>
+          <v-row v-if="tweetLoader" justify="center" align="center">
+            <v-progress-circular
+              v-if="tweetLoader"
+              :indeterminate="tweetLoader"
+              color="primary"
+            ></v-progress-circular>
+          </v-row>
+          <v-col v-for="(tweet, t) in tweets" :key="t" cols="12" md="4">
+            <v-item>
+              <v-card
+                class="mx-auto"
+                color="#26c6da"
+                max-height="600"
+                dark
+                max-width="400"
+              >
+                <v-img
+                  v-if="tweet.images.length !== 0"
+                  :src="tweet.images[0]"
+                  height="200px"
+                ></v-img>
+                <v-card-text class="subtitle-1">
+                  {{ tweet.text }}
+                </v-card-text>
+                <v-card-actions>
+                  <v-list-item class="grow">
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        tweet.screenName
+                      }}</v-list-item-title>
+                    </v-list-item-content>
+                    <v-row align="center" justify="end">
+                      <v-icon class="mr-1">mdi-heart</v-icon>
+                      <span class="subheading mr-2">{{
+                        tweet.favoriteCount
+                      }}</span>
+                      <span class="mr-1">·</span>
+                      <v-icon class="mr-1">mdi-share-variant</v-icon>
+                      <span class="subheading">{{ tweet.retweetCount }}</span>
+                    </v-row>
+                  </v-list-item>
+                </v-card-actions>
+              </v-card>
+            </v-item>
+          </v-col>
+        </v-row>
       </div>
       <!--News-->
       <div id="news">
         <v-row style="padding-bottom:15px;">
-          <v-list-item link>
+          <v-list-item>
             <v-list-item-icon>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -137,6 +138,13 @@
               >
             </v-list-item-content>
           </v-list-item>
+        </v-row>
+        <v-row v-if="tweetLoader" justify="center" align="center">
+          <v-progress-circular
+            v-if="tweetLoader"
+            :indeterminate="tweetLoader"
+            color="primary"
+          ></v-progress-circular>
         </v-row>
         <v-card flat class="mx-auto" width="100%">
           <v-col v-for="(item, i) in news" :key="i" cols="12">
@@ -193,6 +201,8 @@ export default {
   data: () => ({
     news: [],
     tweets: [],
+    tweetLoader: true,
+    newsLoader: true
   }),
 
   methods: {
@@ -210,21 +220,21 @@ export default {
                 "x-rapidapi-host":
                   "contextualwebsearch-websearch-v1.p.rapidapi.com",
                 "x-rapidapi-key":
-                  "f5b75795admshf24e083a78ee561p13a059jsn586dd0c7c46f",
-              },
+                  "f5b75795admshf24e083a78ee561p13a059jsn586dd0c7c46f"
+              }
             }
-          ),
+          )
         ])
         .then(
           axios.spread((tweets, news) => {
             this.tweets = [];
             this.news = [];
-            tweets.data.forEach((item) => {
+            tweets.data.forEach(item => {
               let tempObj = {};
               tempObj["screenName"] = item.screenName;
               tempObj["text"] = item.text;
               tempObj["images"] = [];
-              item.images.forEach((image) => {
+              item.images.forEach(image => {
                 tempObj.images.push(image);
               });
               tempObj["time"] = item.time;
@@ -232,7 +242,8 @@ export default {
               tempObj["retweetCount"] = item.retweetCount;
               this.tweets.push(tempObj);
             });
-            news.data.value.forEach((value) => {
+            this.tweetLoader = false;
+            news.data.value.forEach(value => {
               let tempObj = {};
               tempObj["datePublished"] = moment(value.datePublished).format(
                 "MMMM Do YYYY, h:mm:ss a"
@@ -248,13 +259,14 @@ export default {
               tempObj["show"] = false;
               this.news.push(tempObj);
             });
+            this.newsLoader = false;
           })
         )
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
-    },
-  },
+    }
+  }
 };
 </script>
 <style>
