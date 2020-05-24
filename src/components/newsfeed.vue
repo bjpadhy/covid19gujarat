@@ -139,10 +139,10 @@
             </v-list-item-content>
           </v-list-item>
         </v-row>
-        <v-row v-if="tweetLoader" justify="center" align="center">
+        <v-row v-if="newsLoader" justify="center" align="center">
           <v-progress-circular
-            v-if="tweetLoader"
-            :indeterminate="tweetLoader"
+            v-if="newsLoader"
+            :indeterminate="newsLoader"
             color="primary"
           ></v-progress-circular>
         </v-row>
