@@ -7,6 +7,8 @@ import "firebase/analytics";
 import VueRouter from "vue-router";
 import MainContent from "./components/MainContent.vue";
 import NewsFeed from "./components/NewsFeed.vue";
+import Essentials from "./components/Essentials.vue";
+
 Vue.use(VueRouter);
 
 var firebaseConfig = {
@@ -31,7 +33,8 @@ const router = new VueRouter({
   base: __dirname,
   routes: [
     { path: "/", component: MainContent },
-    { path: "/newsfeed", component: NewsFeed }
+    { path: "/newsfeed", component: NewsFeed },
+    { path: "/essentials", component: Essentials }
   ]
 });
 
