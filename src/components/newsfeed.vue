@@ -2,7 +2,7 @@
   <v-content>
     <v-container>
       <!--Tweets-->
-      <!-- <div id="tweets">
+      <div id="tweets">
         <v-row style="padding-bottom:15px;">
           <v-list-item>
             <v-list-item-icon>
@@ -63,8 +63,8 @@
                 max-width="400"
               >
                 <v-img
-                  v-if="tweet.images.length !== 0"
-                  :src="tweet.images[0]"
+                  v-if="tweet.image"
+                  :src="tweet.image"
                   height="200px"
                 ></v-img>
                 <v-card-text class="subtitle-1">
@@ -92,7 +92,7 @@
             </v-item>
           </v-col>
         </v-row>
-      </div> -->
+      </div>
       <!--News-->
       <div id="news">
         <v-row style="padding-bottom:15px;">
@@ -209,9 +209,9 @@ export default {
     async getData() {
       axios
         .all([
-          // axios.get(
-          //   "https://twitscrapeapi.herokuapp.com/api/by-list/bjpadhy/corona-gujarat/6"
-          // )
+          axios.get(
+            "https://twitscrapeapi.herokuapp.com/api/list/bjpadhy/corona-gujarat?count=6"
+          ),
           axios.get(
             "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/NewsSearchAPI?fromPublishedDate=1%252F1%252F2020&autoCorrect=false&pageNumber=1&pageSize=10&q=corona%20gujarat&safeSearch=true",
             {
@@ -226,22 +226,24 @@ export default {
           )
         ])
         .then(
-          axios.spread((news) => {
+          axios.spread((twitterData, news) => {
             this.tweets = [];
             this.news = [];
-            // tweets.data.forEach(item => {
-            //   let tempObj = {};
-            //   tempObj["screenName"] = item.screenName;
-            //   tempObj["text"] = item.text;
-            //   tempObj["images"] = [];
-            //   item.images.forEach(image => {
-            //     tempObj.images.push(image);
-            //   });
-            //   tempObj["time"] = item.time;
-            //   tempObj["favoriteCount"] = item.favoriteCount;
-            //   tempObj["retweetCount"] = item.retweetCount;
-            //   this.tweets.push(tempObj);
-            // });
+            console.log(twitterData);
+            console.log(news);
+            twitterData.data.forEach(item => {
+              let tempObj = {};
+              console.log(item);
+              tempObj["screenName"] = item.user.name;
+              tempObj["text"] = item.text;
+              if (item.extended_entities)
+                tempObj["image"] =
+                  item.extended_entities.media[0].media_url_https;
+              tempObj["time"] = item.created_at;
+              tempObj["favoriteCount"] = item.favorite_count;
+              tempObj["retweetCount"] = item.retweet_count;
+              this.tweets.push(tempObj);
+            });
             this.tweetLoader = false;
             news.data.value.forEach(value => {
               let tempObj = {};
